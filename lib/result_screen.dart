@@ -9,7 +9,6 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var phones = _getPhonesFromRowText(text);
-    print(phones);
 
     return Scaffold(
       appBar: AppBar(
@@ -33,11 +32,11 @@ class ResultScreen extends StatelessWidget {
 
   List<String> _getPhonesFromRowText(String text) {
     RegExp exp = RegExp(
-        r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})');
+        r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}([-.\s]?\d{1,4})?([-.\s]?\d{1,4})?)');
     Iterable<RegExpMatch> matches = exp.allMatches(text);
     final filteredMatches = matches
         .where(
-            (m) => m[0] != null && !m[0]!.contains('/n') && m[0]!.length >= 6)
+            (m) => m[0] != null && !m[0]!.contains('\n') && m[0]!.replaceAll(RegExp(r'[()-\s]'), '').length >= 6)
         .map((m) => m[0]!)
         .toList();
     return filteredMatches;

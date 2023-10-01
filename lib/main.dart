@@ -109,7 +109,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           padding: const EdgeInsets.only(bottom: 30.0),
                           child: Center(
                             child: ElevatedButton(
-                              onPressed: _scanImage,
+                              onPressed: _takePhotoAndProcess,
                               child: const Text('Scan text'),
                             ),
                           ),
@@ -172,11 +172,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Future<void> _cameraSelected(CameraDescription camera) async {
     _cameraController = CameraController(
       camera,
-      ResolutionPreset.max,
+      ResolutionPreset.medium,
       enableAudio: false,
     );
-
     await _cameraController!.initialize();
+    // await _cameraController!.setFocusMode(FocusMode.locked);
+
 
     if (!mounted) {
       return;
@@ -184,13 +185,17 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     setState(() {});
   }
 
-  Future<void> _scanImage() async {
+  Future<void> _takePhotoAndProcess() async {
     if (_cameraController == null) return;
 
     final navigator = Navigator.of(context);
 
     try {
+      await _cameraController!.setFocusMode(FocusMode.locked);
+      await _cameraController!.setExposureMode(ExposureMode.locked);
       final pictureFile = await _cameraController!.takePicture();
+      await _cameraController!.setFocusMode(FocusMode.auto);
+      await _cameraController!.setExposureMode(ExposureMode.auto);
 
       final file = File(pictureFile.path);
 
