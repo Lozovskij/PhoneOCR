@@ -82,13 +82,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         return Stack(
           children: [
             // Show the camera feed behind everything
-            if (_isPermissionGranted)
+              if (_isPermissionGranted)
               FutureBuilder<List<CameraDescription>>(
                 future: availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     _initCameraController(snapshot.data!);
-
                     return Center(child: CameraPreview(_cameraController!));
                   } else {
                     return const LinearProgressIndicator();

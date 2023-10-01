@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ResultScreen extends StatelessWidget {
   final String text;
@@ -22,7 +23,7 @@ class ResultScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    PhoneItem(text: phoneWithStuff),
+                    PhoneItem(phoneViewText: phoneWithStuff),
                   ],
                 )
               ),
@@ -45,10 +46,10 @@ class ResultScreen extends StatelessWidget {
 class PhoneItem extends StatelessWidget {
   const PhoneItem({
     super.key,
-    required this.text,
+    required this.phoneViewText,
   });
 
-  final String text;
+  final String phoneViewText;
 
   @override
   Widget build(BuildContext context) {
@@ -64,18 +65,28 @@ class PhoneItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(text, style: style),
+            Text(phoneViewText, style: style),
             const SizedBox(height: 5),
             ElevatedButton.icon(
-              onPressed: () {
-                print('pressed');
+              onPressed: () async {
+                _openPhoneApp(phoneViewText);
               },
-              icon: Icon(Icons.call),
-              label: Text('Call the number'),
+              icon: const Icon(Icons.call),
+              label: const Text('Call the number'),
             ),
           ],
         )
       ),
     );
+  }
+
+  Future<void> _openPhoneApp(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+                  scheme: "tel",
+                  path: phoneNumber
+                );
+    if (!await launchUrl(phoneUri)) {
+      throw Exception('Could not launch $phoneNumber');
+    }
   }
 }
