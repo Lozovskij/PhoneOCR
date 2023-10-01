@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   late final Future<void> _future;
 
   CameraController? _cameraController;
-  
+
   final textRecognizer = TextRecognizer();
 
   @override
@@ -82,9 +82,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         return Stack(
           children: [
             // Show the camera feed behind everything
-              if (_isPermissionGranted)
+            if (_isPermissionGranted)
               FutureBuilder<List<CameraDescription>>(
-                future: availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
+                future:
+                    availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     _initCameraController(snapshot.data!);
@@ -94,11 +95,11 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   }
                 },
               ),
-              Scaffold(
-                appBar: AppBar(title: const Text('Phone Number OCR')),
-                // Set the background to transparent so you can see the camera preview
-                backgroundColor: _isPermissionGranted ? Colors.transparent : null,
-                body: _isPermissionGranted
+            Scaffold(
+              appBar: AppBar(title: const Text('Phone Number OCR')),
+              // Set the background to transparent so you can see the camera preview
+              backgroundColor: _isPermissionGranted ? Colors.transparent : null,
+              body: _isPermissionGranted
                   ? Column(
                       children: [
                         Expanded(
@@ -124,13 +125,13 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
-              ),
-          ]
+            ),
+          ],
         );
-      }
+      },
     );
   }
-  
+
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
     _isPermissionGranted = status == PermissionStatus.granted;
@@ -182,7 +183,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
     setState(() {});
   }
-
 
   Future<void> _scanImage() async {
     if (_cameraController == null) return;

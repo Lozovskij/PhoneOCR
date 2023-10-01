@@ -16,29 +16,30 @@ class ResultScreen extends StatelessWidget {
         title: const Text('Result'),
       ),
       body: ListView(
-          children: [ 
-            for (var phoneWithStuff in phones)
-              Padding(
+        children: [
+          for (var phoneWithStuff in phones)
+            Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     PhoneItem(phoneViewText: phoneWithStuff),
                   ],
-                )
-              ),
-          ],
-        ),
+                )),
+        ],
+      ),
     );
   }
 
   List<String> _getPhonesFromRowText(String text) {
-    RegExp exp = RegExp(r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})');
+    RegExp exp = RegExp(
+        r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})');
     Iterable<RegExpMatch> matches = exp.allMatches(text);
     final filteredMatches = matches
-      .where((m) => m[0] != null && !m[0]!.contains('/n') && m[0]!.length >= 6)
-      .map((m) => m[0]!)
-      .toList();
+        .where(
+            (m) => m[0] != null && !m[0]!.contains('/n') && m[0]!.length >= 6)
+        .map((m) => m[0]!)
+        .toList();
     return filteredMatches;
   }
 }
@@ -53,7 +54,7 @@ class PhoneItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);  
+    final theme = Theme.of(context);
     final style = theme.textTheme.displaySmall!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
@@ -75,16 +76,13 @@ class PhoneItem extends StatelessWidget {
               label: const Text('Call the number'),
             ),
           ],
-        )
+        ),
       ),
     );
   }
 
   Future<void> _openPhoneApp(String phoneNumber) async {
-    final Uri phoneUri = Uri(
-                  scheme: "tel",
-                  path: phoneNumber
-                );
+    final Uri phoneUri = Uri(scheme: "tel", path: phoneNumber);
     if (!await launchUrl(phoneUri)) {
       throw Exception('Could not launch $phoneNumber');
     }
