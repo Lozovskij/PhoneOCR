@@ -18,7 +18,7 @@ class ResultScreen extends StatelessWidget {
         children: [
           for (var phoneWithStuff in phones)
             Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -53,19 +53,26 @@ class PhoneItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final theme = Theme.of(context);
+    // final style = theme.textTheme.displaySmall!.copyWith(
+    //   color: theme.colorScheme.onPrimary,
+    // );
     final theme = Theme.of(context);
     final style = theme.textTheme.displaySmall!.copyWith(
-      color: theme.colorScheme.onPrimary,
+      color: theme.colorScheme.primary,
     );
 
     return Card(
-      color: theme.colorScheme.primary,
+      // color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(phoneViewText, style: style),
+            Text(phoneViewText, 
+            style: style,
+            textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 5),
             ElevatedButton.icon(
               onPressed: () async {
