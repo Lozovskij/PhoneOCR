@@ -108,9 +108,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         Container(
                           padding: const EdgeInsets.only(bottom: 30.0),
                           child: Center(
-                            child: ElevatedButton(
+                            child: IconButton(
+                              icon: const Icon(Icons.radio_button_checked),
+                              tooltip: 'Select phone numbers',
                               onPressed: _takePhotoAndProcess,
-                              child: const Text('Scan text'),
+                              color: Colors.white,
+                              iconSize: 70,
                             ),
                           ),
                         ),
@@ -176,8 +179,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       enableAudio: false,
     );
     await _cameraController!.initialize();
-    // await _cameraController!.setFocusMode(FocusMode.locked);
-
+    await _cameraController!.setFlashMode(FlashMode.off);
 
     if (!mounted) {
       return;
