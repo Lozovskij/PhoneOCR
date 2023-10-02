@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Phone OCR',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
         useMaterial3: true,
       ),
       home: const MainScreen(),
@@ -37,7 +37,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
-  bool _isPermissionGranted = false;
+  PermissionStatus _cameraPermissionStatus = PermissionStatus.denied;
+
   late final Future<void> _future;
 
   CameraController? _cameraController;
@@ -81,8 +82,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         return Stack(
           children: [
-            // Show the camera feed behind everything
-            if (_isPermissionGranted)
+            if (_cameraPermissionStatus == PermissionStatus.granted)
+              // Show the camera feed behind everything
               FutureBuilder<List<CameraDescription>>(
                 future:
                     availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
@@ -95,40 +96,71 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   }
                 },
               ),
-            Scaffold(
-              appBar: AppBar(title: const Text('Phone Number OCR')),
-              // Set the background to transparent so you can see the camera preview
-              backgroundColor: _isPermissionGranted ? Colors.transparent : null,
-              body: _isPermissionGranted
-                  ? Column(
-                      children: [
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 30.0),
-                          child: Center(
-                            child: IconButton(
-                              icon: const Icon(Icons.radio_button_checked),
-                              tooltip: 'Select phone numbers',
-                              onPressed: _takePhotoAndProcess,
-                              color: Colors.white,
-                              iconSize: 70,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Center(
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-                        child: const Text(
-                          'Camera permission denied',
-                          textAlign: TextAlign.center,
+            if (_cameraPermissionStatus == PermissionStatus.granted)
+              Scaffold(
+                appBar: AppBar(title: const Text('Phone Number OCR')),
+                // Set the background to transparent so you can see the camera preview
+                backgroundColor: Colors.transparent,
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: Center(
+                        child: IconButton(
+                          icon: const Icon(Icons.radio_button_checked),
+                          tooltip: 'Select phone numbers',
+                          onPressed: _takePhotoAndProcess,
+                          color: Colors.white,
+                          iconSize: 70,
                         ),
                       ),
                     ),
-            ),
+                  ],
+                ),
+              ),
+            if (_cameraPermissionStatus == PermissionStatus.denied ||
+                _cameraPermissionStatus == PermissionStatus.permanentlyDenied)
+              Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(30.0),
+                        child: SizedBox(
+                          width: 300,
+                          child: Text(
+                            'Press "Scan image". Please note that in order to use the app, you must provide permissions to use the camera',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          var status = await Permission.camera.status;
+                          if (status.isGranted) {
+                            setState(() => _cameraPermissionStatus = status);
+                          }
+                          if (status.isDenied) {
+                            await _requestCameraPermission();
+                            status = await Permission.camera.status;
+                            setState(() => _cameraPermissionStatus = status);
+                            return;
+                          }
+                          if (status.isPermanentlyDenied) {
+                            await openAppSettings();
+                            return;
+                          }
+                        },
+                        child: const Text('Scan image'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         );
       },
@@ -137,7 +169,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
-    _isPermissionGranted = status == PermissionStatus.granted;
+    _cameraPermissionStatus = status;
   }
 
   void _startCamera() {

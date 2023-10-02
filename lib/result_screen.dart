@@ -35,10 +35,8 @@ class ResultScreen extends StatelessWidget {
         r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}([-.\s]?\d{1,4})?([-.\s]?\d{1,4})?)');
     Iterable<RegExpMatch> matches = exp.allMatches(text);
     final filteredMatches = matches
-        .where((m) =>
-            m[0] != null &&
-            !m[0]!.contains('\n') &&
-            m[0]!.replaceAll(RegExp(r'[()-\s]'), '').length >= 6)
+        .where(
+            (m) => m[0] != null && !m[0]!.contains('\n') && m[0]!.replaceAll(RegExp(r'[()-\s]'), '').length >= 6)
         .map((m) => m[0]!)
         .toList();
     return filteredMatches;
