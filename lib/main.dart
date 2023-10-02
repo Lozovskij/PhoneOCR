@@ -98,7 +98,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               ),
             if (_cameraPermissionStatus == PermissionStatus.granted)
               Scaffold(
-                appBar: AppBar(title: const Text('Phone Number OCR')),
                 // Set the background to transparent so you can see the camera preview
                 backgroundColor: Colors.transparent,
                 body: Column(

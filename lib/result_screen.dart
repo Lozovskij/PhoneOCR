@@ -9,11 +9,19 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var phones = _getPhonesFromRowText(text);
+    List<String> fixedBracePhones = [];
+
+    for (var phone in phones) {
+      if (phone.contains(')') && !phone.contains('(')) {
+        fixedBracePhones.add('($phone');
+      }
+      else {
+        fixedBracePhones.add(phone);
+      }
+    }
+    phones = fixedBracePhones;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Result'),
-      ),
       body: ListView(
         children: [
           for (var phoneWithStuff in phones)
