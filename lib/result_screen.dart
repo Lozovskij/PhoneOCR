@@ -1,53 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import 'helpers.dart';
 
 class ResultScreen extends StatelessWidget {
-  final String text;
+  final List<String> phones;
 
-  const ResultScreen({super.key, required this.text});
+  const ResultScreen({super.key, required this.phones});
 
   @override
   Widget build(BuildContext context) {
-    var phones = _getPhonesFromRowText(text);
-    List<String> fixedBracePhones = [];
-
-    for (var phone in phones) {
-      if (phone.contains(')') && !phone.contains('(')) {
-        fixedBracePhones.add('($phone');
-      }
-      else {
-        fixedBracePhones.add(phone);
-      }
-    }
-    phones = fixedBracePhones;
-
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Results (${phones.length})')),
       body: ListView(
+        padding:const EdgeInsets.only(bottom: 20),
         children: [
-          for (var phoneWithStuff in phones)
+          for (var phone in phones)
             Padding(
-                padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PhoneItem(phoneViewText: phoneWithStuff),
-                  ],
-                )),
+              padding: const EdgeInsets.only(right: 20, left: 20),
+              child:
+                  PhoneItem(phoneViewText: phone),
+              ),
+            
         ],
       ),
     );
-  }
-
-  List<String> _getPhonesFromRowText(String text) {
-    RegExp exp = RegExp(
-        r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}([-.\s]?\d{1,4})?([-.\s]?\d{1,4})?)');
-    Iterable<RegExpMatch> matches = exp.allMatches(text);
-    final filteredMatches = matches
-        .where(
-            (m) => m[0] != null && !m[0]!.contains('\n') && m[0]!.replaceAll(RegExp(r'[()-\s]'), '').length >= 6)
-        .map((m) => m[0]!)
-        .toList();
-    return filteredMatches;
   }
 }
 
@@ -61,39 +38,17 @@ class PhoneItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style = theme.textTheme.displaySmall!.copyWith(
-      color: theme.colorScheme.primary,
-    );
-
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(phoneViewText, 
-            style: style,
-            textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 5),
-            ElevatedButton.icon(
-              onPressed: () async {
-                _openPhoneApp(phoneViewText);
+      child: ListTile(
+              title: Text(
+                phoneViewText,
+                style: const TextStyle(color: Colors.black),
+              ),
+              onTap: () async {
+                await Helpers.openPhoneApp(phoneViewText);
               },
-              icon: const Icon(Icons.call),
-              label: const Text('Call the number'),
+              leading: const Icon(Icons.dialpad_sharp),
             ),
-          ],
-        ),
-      ),
     );
-  }
-
-  Future<void> _openPhoneApp(String phoneNumber) async {
-    final Uri phoneUri = Uri(scheme: "tel", path: phoneNumber);
-    if (!await launchUrl(phoneUri)) {
-      throw Exception('Could not launch $phoneNumber');
-    }
   }
 }

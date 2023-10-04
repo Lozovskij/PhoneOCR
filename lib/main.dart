@@ -4,7 +4,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:phone_ocr/helpers.dart';
 import 'package:phone_ocr/result_screen.dart';
+
+import 'result_dialog.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Phone OCR',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
       home: const MainScreen(),
@@ -231,16 +234,19 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       await _cameraController!.setExposureMode(ExposureMode.auto);
 
       final file = File(pictureFile.path);
-
       final inputImage = InputImage.fromFile(file);
       final recognizedText = await textRecognizer.processImage(inputImage);
+      var phones = Helpers.getPhonesFromRowText(recognizedText.text);
 
-      await navigator.push(
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              ResultScreen(text: recognizedText.text),
-        ),
-      );
+      if (phones.length > 5) {
+        await navigator.push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => ResultScreen(phones: phones),
+          ),
+        );
+      } else {
+        _showPhonesDialog(phones);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -248,5 +254,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         ),
       );
     }
+  }
+
+  void _showPhonesDialog(List<String> phones) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return ResultDialog(phones: phones);
+      },
+    );
   }
 }
