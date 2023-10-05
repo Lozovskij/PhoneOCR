@@ -26,7 +26,6 @@ class ResultDialog extends StatelessWidget {
                 onTap: () async {
                   await Helpers.openPhoneApp(phone);
                 },
-                leading: const Icon(Icons.dialpad_sharp),
               ),
             ),
           if (phones.isEmpty)

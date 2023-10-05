@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_ocr/helpers.dart';
@@ -10,7 +12,9 @@ import 'package:phone_ocr/result_screen.dart';
 import 'result_dialog.dart';
 
 void main() {
-  runApp(const MyApp());
+   WidgetsFlutterBinding.ensureInitialized();
+   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -44,6 +48,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   late final Future<void> _permissionFuture;
   CameraController? _cameraController;
   final textRecognizer = TextRecognizer();
+
+  bool showFocusCircle = false;
+  double x = 0;
+  double y = 0;
 
   @override
   void initState() {
@@ -80,87 +88,112 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return FutureBuilder(
       future: _permissionFuture,
       builder: (context, snapshot) {
-        return Stack(
-          children: [
-            if (_cameraPermissionStatus == PermissionStatus.granted)
-              // Show the camera feed behind everything
-              FutureBuilder<List<CameraDescription>>(
-                future:
-                    availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    _initCameraController(snapshot.data!);
-                    return Center(child: CameraPreview(_cameraController!));
-                  } else {
-                    return const LinearProgressIndicator();
-                  }
-                },
-              ),
-            if (_cameraPermissionStatus == PermissionStatus.granted)
-              Scaffold(
-                // Set the background to transparent so you can see the camera preview
-                backgroundColor: Colors.transparent,
-                body: Column(
-                  children: [
-                    Expanded(
-                      child: Container(),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 30.0),
-                      child: Center(
-                        child: IconButton(
-                          icon: const Icon(Icons.radio_button_checked),
-                          tooltip: 'Select phone numbers',
-                          onPressed: _takePhotoAndProcess,
-                          color: Colors.white,
-                          iconSize: 70,
-                        ),
-                      ),
-                    ),
-                  ],
+        return SafeArea(
+          child: Stack(
+            children: [
+              if (_cameraPermissionStatus == PermissionStatus.granted)
+                // Show the camera feed behind everything
+                FutureBuilder<List<CameraDescription>>(
+                  future:
+                      availableCameras(), //TODO is it right though? I wouldn't place it in there (FUTURE PROBLEM)
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      _initCameraController(snapshot.data!);
+                      return  CameraPreview(_cameraController!);
+                    } else {
+                      return const LinearProgressIndicator();
+                    }
+                  },
                 ),
-              ),
-            if (_cameraPermissionStatus == PermissionStatus.denied ||
-                _cameraPermissionStatus == PermissionStatus.permanentlyDenied)
-              Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              if (_cameraPermissionStatus == PermissionStatus.granted)
+                Scaffold(
+                  // Set the background to transparent so you can see the camera preview
+                  backgroundColor: Colors.transparent,
+                  body: Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(30.0),
-                        child: SizedBox(
-                          width: 300,
-                          child: Text(
-                            'Press "Scan image". Please note that in order to use the app, you must provide permissions to use the camera',
-                            textAlign: TextAlign.center,
+                      Expanded(
+                         child: GestureDetector(
+                          onTapUp: (details) {
+                            _onTap(details);
+                          },
+                          behavior: HitTestBehavior.translucent,
+                          child: Stack(
+                            children: [
+                              if (showFocusCircle)
+                                Positioned(
+                                  top: y - 37,
+                                  left: x - 37,
+                                  child: Container(
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white, width: 3),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          var status = await Permission.camera.status;
-                          if (status.isGranted) {
-                            setState(() => _cameraPermissionStatus = status);
-                          }
-                          if (status.isDenied) {
-                            await _requestCameraPermission();
-                            status = await Permission.camera.status;
-                            setState(() => _cameraPermissionStatus = status);
-                            return;
-                          }
-                          if (status.isPermanentlyDenied) {
-                            await openAppSettings();
-                            return;
-                          }
-                        },
-                        child: const Text('Scan image'),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        child: Center(
+                          child: IconButton(
+                            icon: const Icon(Icons.radio_button_checked),
+                            tooltip: 'Select phone numbers',
+                            onPressed: _takePhotoAndProcess,
+                            color: Colors.white,
+                            iconSize: 70,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-          ],
+              if (_cameraPermissionStatus == PermissionStatus.denied ||
+                  _cameraPermissionStatus == PermissionStatus.permanentlyDenied)
+                Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(30.0),
+                          child: SizedBox(
+                            width: 300,
+                            child: Text(
+                              'Press "Scan image". Please note that in order to use the app, you must provide permissions to use the camera',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            var status = await Permission.camera.status;
+                            if (status.isGranted) {
+                              setState(() => _cameraPermissionStatus = status);
+                            }
+                            if (status.isDenied) {
+                              await _requestCameraPermission();
+                              status = await Permission.camera.status;
+                              setState(() => _cameraPermissionStatus = status);
+                              return;
+                            }
+                            if (status.isPermanentlyDenied) {
+                              await openAppSettings();
+                              return;
+                            }
+                          },
+                          child: const Text('Scan image'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
@@ -169,6 +202,43 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
     _cameraPermissionStatus = status;
+  }
+
+  Future<void> _onTap(TapUpDetails details) async {
+    debugPrint("hello");
+    if (_cameraController == null) return;
+    if (_cameraController!.value.isInitialized) {
+      showFocusCircle = true;
+      x = details.localPosition.dx;
+      y = details.localPosition.dy;
+
+      double fullWidth = MediaQuery.of(context).size.width;
+      double cameraHeight = fullWidth * _cameraController!.value.aspectRatio;
+
+      double xp = x / fullWidth;
+      double yp = y / cameraHeight;
+
+      Offset point = Offset(xp, yp);
+      debugPrint("point : $point");
+
+      // Manually focus
+      if (point.dx < 0 || point.dx > 1 || point.dy < 0 || point.dy > 1) {
+        log('point out of bounds');
+        return;
+      }
+      await _cameraController!.setFocusPoint(point);
+
+      // Manually set light exposure
+      //controller.setExposurePoint(point);
+
+      setState(() {
+        Future.delayed(const Duration(milliseconds: 100)).whenComplete(() {
+          setState(() {
+            showFocusCircle = false;
+          });
+        });
+      });
+    }
   }
 
   void _startCamera() {

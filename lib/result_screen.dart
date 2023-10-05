@@ -10,18 +10,15 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Results (${phones.length})')),
+      appBar: AppBar(title: Text('Results (${phones.length})')),
       body: ListView(
-        padding:const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 20),
         children: [
           for (var phone in phones)
             Padding(
               padding: const EdgeInsets.only(right: 20, left: 20),
-              child:
-                  PhoneItem(phoneViewText: phone),
-              ),
-            
+              child: PhoneItem(phoneViewText: phone),
+            ),
         ],
       ),
     );
@@ -40,15 +37,14 @@ class PhoneItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-              title: Text(
-                phoneViewText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              onTap: () async {
-                await Helpers.openPhoneApp(phoneViewText);
-              },
-              leading: const Icon(Icons.dialpad_sharp),
-            ),
+        title: Text(
+          phoneViewText,
+          style: const TextStyle(color: Colors.black),
+        ),
+        onTap: () async {
+          await Helpers.openPhoneApp(phoneViewText);
+        },
+      ),
     );
   }
 }
