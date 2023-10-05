@@ -41,18 +41,15 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   PermissionStatus _cameraPermissionStatus = PermissionStatus.denied;
-
-  late final Future<void> _future;
-
+  late final Future<void> _permissionFuture;
   CameraController? _cameraController;
-
   final textRecognizer = TextRecognizer();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _future = _requestCameraPermission();
+    _permissionFuture = _requestCameraPermission();
   }
 
   @override
@@ -81,7 +78,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _future,
+      future: _permissionFuture,
       builder: (context, snapshot) {
         return Stack(
           children: [
