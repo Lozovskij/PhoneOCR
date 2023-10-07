@@ -1,6 +1,8 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class Helpers {
+  static const String makeSureNumbersAreCorrectMessage = 'Please make sure that the numbers are recognized correctly';
+
   static Future<void> openPhoneApp(String phoneNumber) async {
     final Uri phoneUri = Uri(scheme: "tel", path: phoneNumber);
     if (!await launchUrl(phoneUri)) {

@@ -205,7 +205,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _onTap(TapUpDetails details) async {
-    debugPrint("hello");
     if (_cameraController == null) return;
     if (_cameraController!.value.isInitialized) {
       showFocusCircle = true;

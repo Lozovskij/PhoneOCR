@@ -18,7 +18,9 @@ class ResultDialog extends StatelessWidget {
         children: [
           for (var phone in phones)
             Card(
+          
               child: ListTile(
+                contentPadding: EdgeInsets.only(left: 17, right: 13),
                 title: Text(
                   phone,
                   style: const TextStyle(color: Colors.black),
@@ -26,8 +28,15 @@ class ResultDialog extends StatelessWidget {
                 onTap: () async {
                   await Helpers.openPhoneApp(phone);
                 },
+                trailing: const Icon(Icons.arrow_outward, size: 20,),
               ),
             ),
+            SizedBox(height: 15,),
+          const Center(child: Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Text(Helpers.makeSureNumbersAreCorrectMessage, style: TextStyle(color: const Color.fromRGBO(38, 50, 56, 1),),),
+          )),
+
           if (phones.isEmpty)
             const Center(
               child: Padding(
