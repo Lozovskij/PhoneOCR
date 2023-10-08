@@ -18,7 +18,6 @@ class ResultDialog extends StatelessWidget {
         children: [
           for (var phone in phones)
             Card(
-          
               child: ListTile(
                 contentPadding: EdgeInsets.only(left: 17, right: 13),
                 title: Text(
@@ -28,23 +27,35 @@ class ResultDialog extends StatelessWidget {
                 onTap: () async {
                   await Helpers.openPhoneApp(phone);
                 },
-                trailing: const Icon(Icons.arrow_outward, size: 20,),
+                trailing: const Icon(
+                  Icons.arrow_outward,
+                  size: 20,
+                ),
               ),
             ),
-            SizedBox(height: 15,),
-          const Center(child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Text(Helpers.makeSureNumbersAreCorrectMessage, style: TextStyle(color: const Color.fromRGBO(38, 50, 56, 1),),),
-          )),
-
+          SizedBox(
+            height: 12,
+          ),
+          if (phones.length > 0)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: Text(
+                  Helpers.makeSureNumbersAreCorrectMessage,
+                  style: TextStyle(
+                    color: const Color.fromRGBO(38, 50, 56, 1),
+                  ),
+                ),
+              ),
+            ),
           if (phones.isEmpty)
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  'No results. Try one more time',
+                  'No results found. Please try again',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 32),
+                  style: TextStyle(fontSize: 22),
                 ),
               ),
             ),

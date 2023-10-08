@@ -12,8 +12,8 @@ import 'package:phone_ocr/result_screen.dart';
 import 'result_dialog.dart';
 
 void main() {
-   WidgetsFlutterBinding.ensureInitialized();
-   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(const MyApp()));
 }
 
@@ -99,7 +99,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       _initCameraController(snapshot.data!);
-                      return  CameraPreview(_cameraController!);
+                      return CameraPreview(_cameraController!);
                     } else {
                       return const LinearProgressIndicator();
                     }
@@ -112,7 +112,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   body: Column(
                     children: [
                       Expanded(
-                         child: GestureDetector(
+                        child: GestureDetector(
                           onTapUp: (details) {
                             _onTap(details);
                           },
@@ -226,9 +226,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         return;
       }
       await _cameraController!.setFocusPoint(point);
-
-      // Manually set light exposure
-      //controller.setExposurePoint(point);
 
       setState(() {
         Future.delayed(const Duration(milliseconds: 100)).whenComplete(() {

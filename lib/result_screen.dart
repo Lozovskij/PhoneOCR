@@ -15,8 +15,18 @@ class ResultScreen extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 20),
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 60, right: 60, top: 20, bottom: 20,),
-            child: const Center(child: Text(Helpers.makeSureNumbersAreCorrectMessage, textAlign: TextAlign.center,),),
+            padding: const EdgeInsets.only(
+              left: 60,
+              right: 60,
+              top: 20,
+              bottom: 20,
+            ),
+            child: const Center(
+              child: Text(
+                Helpers.makeSureNumbersAreCorrectMessage,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           for (var phone in phones)
             Padding(
@@ -48,8 +58,7 @@ class PhoneItem extends StatelessWidget {
         onTap: () async {
           await Helpers.openPhoneApp(phoneViewText);
         },
-                trailing: const Icon(Icons.arrow_outward),
-
+        trailing: const Icon(Icons.arrow_outward),
       ),
     );
   }
