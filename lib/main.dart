@@ -272,7 +272,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Future<void> _cameraSelected(CameraDescription camera) async {
     _cameraController = CameraController(
       camera,
-      ResolutionPreset.medium,
+      ResolutionPreset.veryHigh,
       enableAudio: false,
     );
     await _cameraController!.initialize();
