@@ -90,6 +90,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         return SafeArea(
           child: Stack(
+            alignment: AlignmentDirectional.center,
             children: [
               if (_cameraPermissionStatus == PermissionStatus.granted)
                 // Show the camera feed behind everything
@@ -138,14 +139,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 80),
+                        padding: const EdgeInsets.only(bottom: 90),
                         child: Center(
                           child: IconButton(
                             icon: const Icon(Icons.radio_button_checked),
                             tooltip: 'Select phone numbers',
                             onPressed: _takePhotoAndProcess,
                             color: Colors.white,
-                            iconSize: 70,
+                            iconSize: 90,
                           ),
                         ),
                       ),

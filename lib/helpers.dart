@@ -13,7 +13,7 @@ class Helpers {
 
   static List<String> getPhonesFromRowText(String text) {
     RegExp exp = RegExp(
-        r'(\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}([-.\s]?\d{1,4})?([-.\s]?\d{1,4})?)');
+        r'([\)\(]?[+]{0,1}[-.– \)\(]{0,3}\d{1,3}[-.– \)\(]{0,3}\d{1,3}[-.– \)\(]{0,3}\d{1,3}[-.– \)\(]{0,3}\d{1,3}[-.– \)\(]{0,3}\d{1,3}[-.– \)\(]{0,3}\d{1,3})');
     Iterable<RegExpMatch> matches = exp.allMatches(text);
     var filteredMatches = matches
         .where((m) =>
@@ -23,16 +23,6 @@ class Helpers {
         .map((m) => m[0]!)
         .toList();
 
-    //at this point first brace can be not recognized as part of a phone number,
-    //returning it back
-    List<String> result = [];
-    for (var phone in filteredMatches) {
-      if (phone.contains(')') && !phone.contains('(')) {
-        result.add('($phone');
-      } else {
-        result.add(phone);
-      }
-    }
-    return result;
+    return filteredMatches;
   }
 }
