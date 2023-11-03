@@ -1,4 +1,4 @@
-package com.example.phone_ocr
+package com.phoneocr
 
 import io.flutter.embedding.android.FlutterActivity
 
