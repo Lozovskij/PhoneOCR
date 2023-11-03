@@ -1,16 +1,6 @@
-# phone_ocr
+# PhoneOCR
 
-A new Flutter project.
+## Google Play
+https://play.google.com/store/apps/details?id=com.phoneocr
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![phoneocr](https://github.com/Lozovskij/phone_ocr/assets/56762093/08e95870-47dc-4bbf-bc1a-db9e0ff95469)
